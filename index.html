@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Film grain overlay -->
+  <div class="grain-overlay"></div>
+
+  <!-- Subtle cursor-following light -->
+  <div id="cursor-light" class="cursor-light"></div>
+
+  <!-- ============================================
+       SCENE 1 — CHOICE
+       ============================================ -->
+  <main id="scene-choice" class="scene scene--active">
+
+    <p class="tagline">Make your choice</p>
+
+    <!-- ==========================================
+         BACKGROUND IMAGE
+         This is the main scene image showing both hands.
+         REPLACE: assets/bg.png with your full scene image.
+         ========================================== -->
+    <div class="bg-static">
+      <img src="assets/bg.png" alt="Two paws offering pills" class="bg-static__img" draggable="false">
+    </div>
+
+    <!-- ==========================================
+         PAW OVERLAYS (transparent PNGs)
+         These sit on top of the bg and animate on hover.
+         REPLACE: assets/paw-left.png & assets/paw-right.png
+         Adjust positioning in style.css :root variables.
+         ========================================== -->
+    <img src="assets/paw-left.png" alt="" class="paw paw--left" id="paw-left" draggable="false">
+    <img src="assets/paw-right.png" alt="" class="paw paw--right" id="paw-right" draggable="false">
+
+    <!-- Ambient glow behind each paw -->
+    <div class="paw-glow paw-glow--left"></div>
+    <div class="paw-glow paw-glow--right"></div>
+
+    <!-- Invisible click/hover zones -->
+    <div class="hit-zones">
+      <div class="hit-zone hit-zone--left" data-choice="left" role="button" tabindex="0" aria-label="Choose left pill"></div>
+      <div class="hit-zone hit-zone--right" data-choice="right" role="button" tabindex="0" aria-label="Choose right pill"></div>
+    </div>
+
+    <!-- Center divider -->
+    <div class="divider"><div class="divider__line"></div></div>
+
+  </main>
+
+  <!-- ============================================
+       SCENE 2 — DETAIL (after choice)
+       ============================================ -->
+  <section id="scene-detail" class="scene scene-detail">
+
+    <div class="detail-content">
+      <div class="detail-visual-wrapper">
+        <div class="detail-glow"></div>
+        <!-- ==========================================
+             DETAIL IMAGE
+             Set dynamically by JS from CONFIG.
+             REPLACE: assets/detail-left.png, assets/detail-right.png
+             ========================================== -->
+        <img id="detail-img" src="" alt="Selected pill" class="detail__img"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <!-- Fallback: cropped view of bg.png if no detail image -->
+        <div id="detail-crop" class="detail-crop">
+          <img src="assets/bg.png" alt="" class="detail-crop__img" draggable="false">
+        </div>
+      </div>
+
+      <div class="detail-text">
+        <h2 id="detail-title" class="detail-title"></h2>
+        <p id="detail-subtitle" class="detail-subtitle"></p>
+        <!-- Future CTA button slot -->
+        <!-- <a href="#" class="detail-cta">Continue</a> -->
+      </div>
+
+      <button id="btn-back" class="btn-back" aria-label="Go back">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Back</span>
+      </button>
+    </div>
+
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pill-choice",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "3456", "/Users/lord/Claude/pill-choice"],
+      "port": 3456
+    }
+  ]
+}
