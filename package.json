@@ -1,0 +1,16 @@
+{
+  "name": "pill-choice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Premium pill choice voting experience",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.7.0",
+    "@vercel/kv": "^2.0.0"
+  }
+}

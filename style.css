@@ -18,19 +18,107 @@
   /* ==============================================
      PAW POSITIONING — Adjust to align over bg.png
      ============================================== */
-  --paw-l-top: 28%;
-  --paw-l-left: 7%;
-  --paw-l-w: 30%;
+  --paw-l-top: 23%;
+  --paw-l-left: 8%;
+  --paw-l-w: 29%;
 
-  --paw-r-top: 22%;
-  --paw-r-right: 5%;
-  --paw-r-w: 30%;
+  --paw-r-top: 18%;
+  --paw-r-right: 6%;
+  --paw-r-w: 29%;
 
   /* Glow colors per side */
   --glow-left: rgba(120, 200, 160, 0.12);
   --glow-right: rgba(220, 150, 80, 0.12);
   --glow-left-strong: rgba(120, 200, 160, 0.25);
   --glow-right-strong: rgba(220, 150, 80, 0.25);
+}
+
+/* ============================================
+   INTRO SCREEN — Click to enter
+   ============================================ */
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  /* No background color — use a pseudo-element instead for GPU-only fade */
+}
+
+.intro-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #060608;
+  opacity: 1;
+  will-change: opacity;
+  transform: translate3d(0,0,0);
+}
+
+.intro-screen.is-hidden {
+  pointer-events: none;
+}
+
+.intro-screen.is-hidden::before {
+  transition: opacity 3s linear;
+  opacity: 0;
+}
+
+.intro-screen.is-done {
+  visibility: hidden;
+}
+
+.btn-enter {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2rem 3rem;
+  animation: intro-pulse 3s ease-in-out infinite;
+}
+
+.intro-screen.is-hidden .btn-enter {
+  opacity: 0;
+  transition: opacity 0.05s ease;
+  visibility: hidden;
+}
+
+.btn-enter__text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.5s ease;
+}
+
+.btn-enter__line {
+  width: 32px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: width 0.5s var(--ease), background 0.5s ease;
+}
+
+.btn-enter:hover .btn-enter__text {
+  color: var(--text);
+}
+
+.btn-enter:hover .btn-enter__line {
+  width: 56px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes intro-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 /* --- RESET --- */
@@ -179,9 +267,14 @@ body:hover .cursor-light { opacity: 1; }
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
-  transition: transform var(--hover-dur) var(--ease), filter var(--hover-dur) var(--ease);
+  transition:
+    transform var(--hover-dur) var(--ease),
+    filter var(--hover-dur) var(--ease),
+    opacity 0.4s var(--ease);
   will-change: transform;
   filter: drop-shadow(0 8px 30px rgba(0,0,0,0.4));
+  /* Paw overlays hidden — hover effect uses light overlays instead */
+  display: none;
 }
 
 .paw--left {
@@ -216,17 +309,19 @@ body:hover .cursor-light { opacity: 1; }
   75% { transform: translateY(-6px) rotate(0.5deg); }
 }
 
-/* Hover state */
+/* Hover state — paw fades in and lifts, offering the pill */
 .paw--left.is-hovered {
+  opacity: 1;
   animation: none;
-  transform: translateY(-12px) rotate(-2deg) scale(1.03);
-  filter: drop-shadow(0 12px 40px rgba(0,0,0,0.5));
+  transform: translateY(-20px) rotate(-3deg) scale(1.06);
+  filter: drop-shadow(0 24px 60px rgba(0,0,0,0.7));
 }
 
 .paw--right.is-hovered {
+  opacity: 1;
   animation: none;
-  transform: translateY(-12px) rotate(2deg) scale(1.03);
-  filter: drop-shadow(0 12px 40px rgba(0,0,0,0.5));
+  transform: translateY(-20px) rotate(3deg) scale(1.06);
+  filter: drop-shadow(0 24px 60px rgba(0,0,0,0.7));
 }
 
 /* Transition out states */
@@ -266,6 +361,26 @@ body:hover .cursor-light { opacity: 1; }
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Darken overlay on the opposite side — toggled by JS */
+.hover-darken {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+
+.hover-darken--left {
+  background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 40%, transparent 60%);
+}
+
+.hover-darken--right {
+  background: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.3) 40%, transparent 60%);
+}
+
+.hover-darken.is-active { opacity: 1; }
 
 .hit-zone:focus-visible::after {
   content: '';
@@ -465,6 +580,258 @@ body:hover .cursor-light { opacity: 1; }
 }
 
 /* ============================================
+   RESULTS SCENE
+   ============================================ */
+.scene-results {
+  background: var(--bg-detail);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Background image with fade-in */
+.scene-results::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/backgroundvote.png');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: 0;
+}
+
+.scene-results.scene--active::before {
+  opacity: 1;
+}
+
+/* Dark overlay for text readability */
+.scene-results::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+.scene-results .results-content {
+  position: relative;
+  z-index: 2;
+}
+
+.results-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 560px;
+  opacity: 0;
+}
+
+/* Only animate when scene is active */
+.scene--active .results-content {
+  animation: results-enter 1s var(--ease-out) both;
+}
+
+@keyframes results-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.results-tagline {
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+}
+
+.scene--active .results-tagline {
+  animation: results-enter 1s var(--ease-out) 0.15s both;
+}
+
+/* --- Vote bars --- */
+.results-bars {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  opacity: 0;
+}
+
+.scene--active .results-bars {
+  animation: results-enter 1s var(--ease-out) 0.3s both;
+}
+
+.result-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.result-row.is-chosen .result-label {
+  color: var(--text);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.result-label {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  transition: color 0.4s ease;
+}
+
+.result-pct {
+  font-size: 1.8rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bar track */
+.result-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Bar fill — width set by JS */
+.result-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 100px;
+  transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.result-bar-fill--left {
+  background: linear-gradient(90deg, rgba(120, 200, 160, 0.4), rgba(120, 200, 160, 0.7));
+}
+
+.result-bar-fill--right {
+  background: linear-gradient(90deg, rgba(220, 150, 80, 0.4), rgba(220, 150, 80, 0.7));
+}
+
+/* Chosen row gets a subtle glow on the bar */
+.result-row.is-chosen .result-bar-fill--left {
+  box-shadow: 0 0 20px rgba(120, 200, 160, 0.3);
+}
+
+.result-row.is-chosen .result-bar-fill--right {
+  box-shadow: 0 0 20px rgba(220, 150, 80, 0.3);
+}
+
+/* --- Total votes --- */
+.results-total {
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+}
+
+.scene--active .results-total {
+  animation: results-enter 1s var(--ease-out) 0.5s both;
+}
+
+/* --- Your choice indicator --- */
+.results-your-choice {
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+}
+
+.scene--active .results-your-choice {
+  animation: results-enter 1s var(--ease-out) 0.6s both;
+}
+
+/* --- Already voted message --- */
+.results-already {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.2);
+  font-style: italic;
+}
+
+/* --- CA Box --- */
+.ca-box {
+  margin-top: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.8s ease 1.2s, transform 0.8s ease 1.2s;
+}
+
+.scene--active .ca-box {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ca-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.ca-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  min-width: 12rem;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
@@ -485,6 +852,9 @@ body:hover .cursor-light { opacity: 1; }
   .cursor-light { display: none; }
 
   .paw-glow { filter: blur(60px); width: 40%; }
+
+  .results-content { max-width: 90vw; }
+  .result-pct { font-size: 1.4rem; }
 }
 
 @media (max-width: 480px) {

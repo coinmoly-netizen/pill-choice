@@ -11,6 +11,34 @@
 </head>
 <body>
 
+  <!-- ============================================
+       INTRO SCREEN — Click to enter & start music
+       ============================================ -->
+  <div id="intro-screen" class="intro-screen">
+    <button id="btn-enter" class="btn-enter" aria-label="Enter">
+      <span class="btn-enter__text">Enter</span>
+      <span class="btn-enter__line"></span>
+    </button>
+  </div>
+
+  <!-- Sound effect on enter -->
+  <audio id="sfx-enter" preload="auto">
+    <source src="assets/sound.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Voice lines after choice -->
+  <audio id="sfx-voice-left" preload="auto">
+    <source src="assets/leftvoice.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-voice-right" preload="auto">
+    <source src="assets/rightvoice.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="assets/A World Of Madness.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- Film grain overlay -->
   <div class="grain-overlay"></div>
 
@@ -46,7 +74,11 @@
     <div class="paw-glow paw-glow--left"></div>
     <div class="paw-glow paw-glow--right"></div>
 
-    <!-- Invisible click/hover zones -->
+    <!-- Darken overlay on opposite side (toggled by JS on hover) -->
+    <div class="hover-darken hover-darken--right" id="darken-right"></div>
+    <div class="hover-darken hover-darken--left" id="darken-left"></div>
+
+    <!-- Click/hover zones positioned over each paw -->
     <div class="hit-zones">
       <div class="hit-zone hit-zone--left" data-choice="left" role="button" tabindex="0" aria-label="Choose left pill"></div>
       <div class="hit-zone hit-zone--right" data-choice="right" role="button" tabindex="0" aria-label="Choose right pill"></div>
@@ -91,6 +123,61 @@
         </svg>
         <span>Back</span>
       </button>
+    </div>
+
+  </section>
+
+  <!-- ============================================
+       SCENE 3 — RESULTS (after voting)
+       ============================================ -->
+  <section id="scene-results" class="scene scene-results">
+
+    <div class="results-content">
+
+      <p class="results-tagline">The community has spoken</p>
+
+      <!-- Vote bars -->
+      <div class="results-bars">
+
+        <!-- Left side -->
+        <div class="result-row" id="row-left">
+          <div class="result-header">
+            <span class="result-label">Left</span>
+            <span class="result-pct" id="pct-left">0%</span>
+          </div>
+          <div class="result-bar-track">
+            <div class="result-bar-fill result-bar-fill--left" id="bar-left"></div>
+          </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="result-row" id="row-right">
+          <div class="result-header">
+            <span class="result-label">Right</span>
+            <span class="result-pct" id="pct-right">0%</span>
+          </div>
+          <div class="result-bar-track">
+            <div class="result-bar-fill result-bar-fill--right" id="bar-right"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Total votes -->
+      <p class="results-total" id="results-total">0 votes</p>
+
+      <!-- User's choice indicator -->
+      <p class="results-your-choice" id="results-your-choice"></p>
+
+      <!-- Already voted message (hidden by default) -->
+      <p class="results-already" id="results-already" style="display:none;">You have already voted</p>
+
+      <!-- CA display -->
+      <div class="ca-box">
+        <span class="ca-label">CA :</span>
+        <span class="ca-value" id="ca-value"></span>
+      </div>
+
     </div>
 
   </section>
