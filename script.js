@@ -43,7 +43,7 @@
   const sfxEnter    = $('#sfx-enter');
 
   // Volumes (0 to 1)
-  const MUSIC_TARGET_VOL = 0.4;
+  const MUSIC_TARGET_VOL = 0.25;
   bgMusic.volume  = 0;
   sfxEnter.volume = 0.7;
 
@@ -81,8 +81,8 @@
   // Voice lines
   const sfxVoiceLeft  = $('#sfx-voice-left');
   const sfxVoiceRight = $('#sfx-voice-right');
-  sfxVoiceLeft.volume  = 0.8;
-  sfxVoiceRight.volume = 0.8;
+  sfxVoiceLeft.volume  = 1.0;
+  sfxVoiceRight.volume = 1.0;
 
   // State machine: 'choice' | 'transitioning' | 'detail' | 'results'
   let state = 'choice';
@@ -255,6 +255,13 @@
 
     // Show results scene
     sceneResults.classList.add('scene--active');
+
+    // Start background video
+    const bgVideo = sceneResults.querySelector('.results-bg-video');
+    if (bgVideo) {
+      bgVideo.currentTime = 0;
+      bgVideo.play().catch(() => {});
+    }
 
     // Mark the user's chosen row
     const rowLeft = $('#row-left');
