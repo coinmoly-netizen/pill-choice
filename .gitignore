@@ -2,4 +2,6 @@ node_modules/
 data/
 .DS_Store
 *.mp4
+!assets/*.mp4
+!assets/*.mp3
 .claude/

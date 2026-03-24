@@ -11,7 +11,8 @@
      ============================================== */
   // In production, set to '' (same origin).
   // For development with preview proxy, point to Express directly.
-  const API_BASE = location.port === '3456' ? '' : 'http://localhost:3456';
+  // In production (Vercel): same origin. In local dev: point to Express on 3456.
+  const API_BASE = (location.hostname === 'localhost' && location.port !== '3456') ? 'http://localhost:3456' : '';
 
   /* ==============================================
      CONFIG — Edit titles and detail images here.
